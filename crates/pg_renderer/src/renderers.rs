@@ -1,7 +1,6 @@
 mod triangle;
-pub use triangle::TriangleRenderer;
-
 use eyre::Result;
+pub use triangle::TriangleRenderer;
 
 use crate::{RenderContext, RenderResourcePools};
 

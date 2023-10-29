@@ -1,11 +1,17 @@
+use std::path::PathBuf;
+
 use eyre::Result;
 
-use crate::{
-    GpuRenderPipelineHandle, PipelineLayoutDesc, RenderContext, RenderPipelineDesc,
-    RenderResourcePools, ShaderDesc,
-};
-
 use super::Renderer;
+use crate::{
+    resources::{
+        pipeline_layout::PipelineLayoutDesc,
+        render_pipeline::{GpuRenderPipelineHandle, RenderPipelineDesc},
+        shader::ShaderDesc,
+        RenderResourcePools,
+    },
+    RenderContext,
+};
 
 pub struct TriangleRenderer {
     render_pipeline: GpuRenderPipelineHandle,
@@ -13,6 +19,24 @@ pub struct TriangleRenderer {
 
 impl Renderer for TriangleRenderer {
     fn new(ctx: &mut RenderContext, swapchain_format: wgpu::TextureFormat) -> Self {
+        let pipeline_layout_handle = ctx.resources.pipeline_layouts.get_or_create(
+            &ctx.device,
+            &PipelineLayoutDesc {
+                label: "triangle_layout".to_owned(),
+            },
+        );
+        let shared_shader_desc = ShaderDesc {
+            label: "triangle.wgsl".to_owned(),
+            source: PathBuf::from("shaders/triangle.wgsl"),
+        };
+        let vertex_shader = ctx
+            .resources
+            .shaders
+            .get_or_create(&ctx.device, &shared_shader_desc);
+        let fragment_shader = ctx
+            .resources
+            .shaders
+            .get_or_create(&ctx.device, &shared_shader_desc);
         let render_pipeline = ctx
             .resources
             .render_pipelines
@@ -20,14 +44,11 @@ impl Renderer for TriangleRenderer {
                 &ctx.device,
                 &RenderPipelineDesc {
                     label: "Wowza".to_owned(),
-                    shader_desc: ShaderDesc {
-                        label: "triangle_shader".to_owned(),
-                    },
-                    pipeline_layout_desc: PipelineLayoutDesc {
-                        label: "PIPE IT UP".to_owned(),
-                    },
+                    vertex_shader,
+                    fragment_shader,
+                    pipeline_layout: pipeline_layout_handle,
+                    target_format: swapchain_format,
                 },
-                swapchain_format,
                 &mut ctx.resources.shaders,
                 &mut ctx.resources.pipeline_layouts,
             )
