@@ -1,0 +1,43 @@
+[workspace]
+resolver = "2"
+members = ["crates/*", "examples/*"]
+
+[workspace.package]
+authors = ["Halvor Kvamme"]
+description = "Visual Playground"
+version = "0.1.0"
+edition = "2021"
+
+
+[workspace.dependencies]
+pg_renderer = { path = "crates/pg_renderer" }
+pg_logger = { path = "crates/pg_logger" }
+
+# External deps
+eyre = "0.6.8"
+pollster = "0.3.0"
+tracing = "0.1.40"
+tracing-subscriber = "0.3.17"
+wgpu = "0.18.0"
+winit = "0.29.2"
+slotmap = "1.0.6"
+
+[profile.dev]
+opt-level = 1   # Faster debug builds
+panic = "abort"
+
+[profile.dev.build-override]
+debug = true # Debug symbols for build scripts
+
+[profile.dev.package."*"]
+opt-level = 2
+
+[profile.release]
+panic = "abort"
+
+[profile.bench]
+debug = true
+
+[patch.crates-io]
+wgpu = { git = "https://github.com/gfx-rs/wgpu/" }
+eyre = { git = "https://github.com/eyre-rs/eyre" }

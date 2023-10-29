@@ -1,0 +1,18 @@
+[package]
+name = "pg_renderer"
+authors.workspace = true
+description.workspace = true
+version.workspace = true
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+pg_logger.workspace = true
+
+eyre.workspace = true
+tracing.workspace = true
+pollster.workspace = true
+wgpu.workspace = true
+winit.workspace = true
+slotmap.workspace = true
